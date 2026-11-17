@@ -1,0 +1,1323 @@
+{
+  "info": {
+    "name": "My Social Networks API",
+    "description": "Collection de prise en main et documentation des routes. Les identifiants actor_id/viewer_id illustrent les règles métier; ils ne remplacent pas une authentification.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "1bd9b463-6287-4933-8c7c-3b3c20b34be1"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "userId",
+      "value": "1"
+    },
+    {
+      "key": "eventId",
+      "value": "1"
+    },
+    {
+      "key": "groupId",
+      "value": "1"
+    },
+    {
+      "key": "threadId",
+      "value": "1"
+    },
+    {
+      "key": "messageId",
+      "value": "1"
+    },
+    {
+      "key": "commentId",
+      "value": "1"
+    },
+    {
+      "key": "albumId",
+      "value": "1"
+    },
+    {
+      "key": "photoId",
+      "value": "1"
+    },
+    {
+      "key": "pollId",
+      "value": "1"
+    },
+    {
+      "key": "questionId",
+      "value": "1"
+    },
+    {
+      "key": "optionId",
+      "value": "1"
+    },
+    {
+      "key": "ticketTypeId",
+      "value": "1"
+    },
+    {
+      "key": "ticketId",
+      "value": "1"
+    },
+    {
+      "key": "shoppingItemId",
+      "value": "1"
+    },
+    {
+      "key": "rideId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Système",
+      "description": "Disponibilité et statut du service.",
+      "item": [
+        {
+          "name": "État de santé",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health",
+            "description": "Retourne {status: ok} quand le service répond.\n\nAccès : public, aucun rôle requis.\nRéponse : objet JSON {\"status\":\"ok\"}."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Utilisateurs",
+      "description": "CRUD des profils. L’adresse e-mail est unique sans distinction de casse.",
+      "item": [
+        {
+          "name": "Créer un utilisateur",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users",
+            "description": "Crée un profil. Retourne l’identifiant, le nom, l’e-mail et la date de création.\n\nRôle : aucun contrôle de rôle métier n’est appliqué à cette route. Les opérations sont ouvertes dans cette version sans authentification.\nRéponse : profil JSON {id, first_name, last_name, email, created_at}; la création renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"first_name\":\"Amina\",\"last_name\":\"Diallo\",\"email\":\"amina@example.com\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Rechercher / lister les utilisateurs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/users?search=amina&limit=50&offset=0",
+            "description": "Retourne une liste paginée; search filtre le prénom, le nom ou l’e-mail.\n\nRôle : aucun contrôle de rôle métier n’est appliqué à cette route. Les opérations sont ouvertes dans cette version sans authentification.\nRéponse : tableau paginé de profils {id, first_name, last_name, email, created_at}."
+          }
+        },
+        {
+          "name": "Lire un utilisateur",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/users/{{userId}}",
+            "description": "Retourne le profil demandé.\n\nRôle : aucun contrôle de rôle métier n’est appliqué à cette route. Les opérations sont ouvertes dans cette version sans authentification.\nRéponse : profil JSON {id, first_name, last_name, email, created_at}; la création renvoie 201."
+          }
+        },
+        {
+          "name": "Modifier un utilisateur",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/{{userId}}",
+            "description": "Modifie les champs fournis et retourne le profil actualisé.\n\nRôle : aucun contrôle de rôle métier n’est appliqué à cette route. Les opérations sont ouvertes dans cette version sans authentification.\nRéponse : profil JSON {id, first_name, last_name, email, created_at}; la création renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"first_name\":\"Amina\",\"email\":\"amina.d@example.com\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un utilisateur",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/users/{{userId}}",
+            "description": "Supprime un profil s’il n’est pas encore référencé par d’autres ressources.\n\nRôle : aucun contrôle de rôle métier n’est appliqué à cette route. Les opérations sont ouvertes dans cette version sans authentification.\nRéponse : 204 No Content; aucun corps."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Événements",
+      "description": "CRUD des événements, participants et organisateurs.",
+      "item": [
+        {
+          "name": "Créer un événement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events",
+            "description": "Le créateur devient organisateur. Les membres d’un groupe lié sont automatiquement ajoutés comme participants.\n\nRôle : le creator_id doit désigner un utilisateur existant; il devient organisateur. Dans un groupe, le créateur doit être admin ou avoir le droit de créer des événements. Aucun jeton d’authentification n’est vérifié.\nRéponse : objet événement avec dates, lieu, visibilité, options, organizer_ids et participant_ids; création 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Rencontre API\",\"description\":\"Atelier autour des API\",\"starts_at\":\"2026-12-20T10:00:00+00:00\",\"ends_at\":\"2026-12-20T16:00:00+00:00\",\"location\":\"Paris\",\"cover_image_url\":null,\"visibility\":\"public\",\"creator_id\":{{userId}},\"organizer_ids\":[],\"participant_ids\":[],\"group_id\":null,\"shopping_list_enabled\":false,\"carpool_enabled\":false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Rechercher / lister les événements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events?search=API&viewer_id={{userId}}&limit=50&offset=0",
+            "description": "Retourne les événements publics et ceux accessibles au viewer_id; sans viewer_id, seuls les événements publics sont listés.\n\nRôle : lecture publique pour les événements publics. Pour un événement privé, viewer_id doit être un organisateur ou un participant. L’API ne vérifie pas l’identité associée à cet ID.\nRéponse : tableau d’événements avec champs de configuration, organizer_ids et participant_ids."
+          }
+        },
+        {
+          "name": "Lire un événement",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}?viewer_id={{userId}}",
+            "description": "Retourne les champs de l’événement, organizer_ids et participant_ids. viewer_id est nécessaire pour un événement privé.\n\nRôle : lecture publique pour les événements publics. Pour un événement privé, viewer_id doit être un organisateur ou un participant. L’API ne vérifie pas l’identité associée à cet ID.\nRéponse : objet événement avec dates, lieu, visibilité, options, organizer_ids et participant_ids; création 201."
+          }
+        },
+        {
+          "name": "Modifier un événement",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}?actor_id={{userId}}",
+            "description": "Seul un organisateur peut modifier. La date de fin doit rester après la date de début.\n\nRôle : actor_id doit être organisateur de l’événement. L’API vérifie l’association, mais actor_id n’est pas authentifié.\nRéponse : objet événement avec dates, lieu, visibilité, options, organizer_ids et participant_ids; création 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"description\":\"Programme mis à jour\",\"shopping_list_enabled\":true}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un événement",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}?actor_id={{userId}}",
+            "description": "Seul un organisateur peut supprimer l’événement et ses ressources associées.\n\nRôle : actor_id doit être organisateur de l’événement. L’API vérifie l’association, mais actor_id n’est pas authentifié.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Lister les participants",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/participants?viewer_id={{userId}}",
+            "description": "Retourne les profils des participants.\n\nRôle : lecture publique pour les événements publics. Pour un événement privé, viewer_id doit être un organisateur ou un participant. L’API ne vérifie pas l’identité associée à cet ID.\nRéponse : tableau de profils utilisateur."
+          }
+        },
+        {
+          "name": "Lister les organisateurs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/organizers?viewer_id={{userId}}",
+            "description": "Retourne les profils des organisateurs.\n\nRôle : lecture publique pour les événements publics. Pour un événement privé, viewer_id doit être un organisateur ou un participant. L’API ne vérifie pas l’identité associée à cet ID.\nRéponse : tableau de profils utilisateur."
+          }
+        },
+        {
+          "name": "Ajouter un participant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}/participants/{{userId}}?actor_id={{userId}}",
+            "description": "Un organisateur ajoute un utilisateur comme participant.\n\nRôle : actor_id doit être organisateur de l’événement. L’API vérifie l’association, mais actor_id n’est pas authentifié.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Retirer un participant",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/participants/{{userId}}?actor_id={{userId}}",
+            "description": "Un organisateur retire un participant.\n\nRôle : actor_id doit être organisateur de l’événement. L’API vérifie l’association, mais actor_id n’est pas authentifié.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Ajouter un organisateur",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}/organizers/{{userId}}?actor_id={{userId}}",
+            "description": "Un organisateur ajoute un autre organisateur.\n\nRôle : actor_id doit être organisateur de l’événement. L’API vérifie l’association, mais actor_id n’est pas authentifié.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Retirer un organisateur",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/organizers/{{userId}}?actor_id={{userId}}",
+            "description": "Un événement doit conserver au moins un organisateur.\n\nRôle : actor_id doit être organisateur de l’événement. L’API vérifie l’association, mais actor_id n’est pas authentifié.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Lire le fil de discussion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/discussion?viewer_id={{userId}}",
+            "description": "Retourne le fil créé avec l’événement; utiliser son id pour consulter et publier des messages.\n\nRôle : lecture publique pour les événements publics. Pour un événement privé, viewer_id doit être un organisateur ou un participant. L’API ne vérifie pas l’identité associée à cet ID.\nRéponse : fil JSON {id, group_id, event_id, created_at}."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Groupes",
+      "description": "CRUD des groupes et gestion de leurs membres / administrateurs.",
+      "item": [
+        {
+          "name": "Créer un groupe",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/groups",
+            "description": "Le créateur devient le premier administrateur; un fil de discussion est créé automatiquement.\n\nRôle : creator_id doit désigner un utilisateur existant; il devient le premier administrateur. Aucun jeton d’authentification n’est vérifié.\nRéponse : objet groupe avec paramètres, member_ids et admin_ids; création 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Communauté API\",\"description\":\"Groupe de travail\",\"icon_url\":null,\"cover_image_url\":null,\"visibility\":\"private\",\"allow_member_posts\":true,\"allow_member_events\":true,\"creator_id\":{{userId}}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Rechercher / lister les groupes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/groups?search=API&viewer_id={{userId}}&limit=50&offset=0",
+            "description": "Un groupe privé non membre n’expose que son nom et ses images; un groupe secret n’est listé qu’à ses membres.\n\nRôle : lecture publique des groupes publics; les groupes privés non membres n’exposent qu’un résumé; les groupes secrets apparaissent aux membres. viewer_id sélectionne les appartenances, sans authentifier l’appelant.\nRéponse : tableau de groupes; un groupe privé non membre ne renvoie que id, name, visibility, icon_url, cover_image_url et created_at."
+          }
+        },
+        {
+          "name": "Lire un groupe",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/groups/{{groupId}}?viewer_id={{userId}}",
+            "description": "Retourne le groupe, member_ids et admin_ids.\n\nRôle : tout le monde pour un groupe public; membre requis pour un groupe privé ou secret. viewer_id sert à vérifier l’association, sans authentifier l’appelant.\nRéponse : objet groupe avec paramètres, member_ids et admin_ids; création 201."
+          }
+        },
+        {
+          "name": "Modifier un groupe",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/groups/{{groupId}}?actor_id={{userId}}",
+            "description": "Seul un administrateur peut modifier le groupe.\n\nRôle : actor_id doit être administrateur du groupe. L’API vérifie l’association, mais actor_id n’est pas authentifié.\nRéponse : objet groupe avec paramètres, member_ids et admin_ids; création 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"description\":\"Description mise à jour\",\"allow_member_posts\":false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un groupe",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/groups/{{groupId}}?actor_id={{userId}}",
+            "description": "Seul un administrateur peut supprimer le groupe.\n\nRôle : actor_id doit être administrateur du groupe. L’API vérifie l’association, mais actor_id n’est pas authentifié.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Lister les membres",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/groups/{{groupId}}/members?viewer_id={{userId}}",
+            "description": "Retourne les profils et rôles des membres.\n\nRôle : tout le monde pour un groupe public; membre requis pour un groupe privé ou secret. viewer_id sert à vérifier l’association, sans authentifier l’appelant.\nRéponse : tableau de profils avec role (member/admin)."
+          }
+        },
+        {
+          "name": "Ajouter un membre",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/groups/{{groupId}}/members/{{userId}}?actor_id={{userId}}",
+            "description": "Un administrateur peut inviter; un utilisateur peut rejoindre lui-même un groupe public.\n\nRôle : un administrateur peut ajouter un utilisateur; un utilisateur peut rejoindre lui-même un groupe public. actor_id désigne l’administrateur ou l’utilisateur qui rejoint.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Changer le rôle d’un membre",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/groups/{{groupId}}/members/{{userId}}/role?actor_id={{userId}}",
+            "description": "Les rôles possibles sont member et admin; le groupe conserve au moins un admin.\n\nRôle : actor_id doit être administrateur. Le dernier admin ne peut pas être rétrogradé.\nRéponse : profil du membre et son rôle actualisé.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"role\":\"admin\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Retirer / quitter le groupe",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/groups/{{groupId}}/members/{{userId}}?actor_id={{userId}}",
+            "description": "Un admin peut retirer un membre. Le dernier administrateur ne peut pas quitter le groupe.\n\nRôle : actor_id doit être l’utilisateur qui quitte le groupe ou un administrateur qui retire quelqu’un. Le dernier admin ne peut pas partir.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Lire le fil de discussion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/groups/{{groupId}}/discussion?viewer_id={{userId}}",
+            "description": "Retourne le fil créé avec le groupe.\n\nRôle : tout le monde pour un groupe public; membre requis pour un groupe privé ou secret. viewer_id sert à vérifier l’association, sans authentifier l’appelant.\nRéponse : fil JSON {id, group_id, event_id, created_at}."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Discussions",
+      "description": "Messages et commentaires rattachés à un seul fil d’événement ou de groupe.",
+      "item": [
+        {
+          "name": "Lire un fil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/threads/{{threadId}}?viewer_id={{userId}}",
+            "description": "Retourne le fil après vérification de l’accès au groupe ou à l’événement.\n\nRôle : viewer_id doit être membre du groupe, ou participant/organisateur de l’événement lié. Pour un groupe public, les messages restent réservés aux membres.\nRéponse : fil JSON {id, group_id, event_id, created_at}."
+          }
+        },
+        {
+          "name": "Lister les messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/threads/{{threadId}}/messages?viewer_id={{userId}}&limit=50&offset=0",
+            "description": "Retourne les messages du fil.\n\nRôle : viewer_id doit être membre du groupe, ou participant/organisateur de l’événement lié. Pour un groupe public, les messages restent réservés aux membres.\nRéponse : tableau paginé de messages ou commentaires."
+          }
+        },
+        {
+          "name": "Publier un message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/threads/{{threadId}}/messages",
+            "description": "L’auteur doit être participant de l’événement ou membre du groupe; les règles du groupe peuvent limiter les publications.\n\nRôle : author_id doit être membre du groupe ou de l’événement. Dans un groupe, les membres ne publient que si allow_member_posts est activé; les admins peuvent toujours publier.\nRéponse : message ou commentaire créé avec id, auteur, texte et created_at; statut 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"author_id\":{{userId}},\"body\":\"Bonjour à tous !\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Modifier un message",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/messages/{{messageId}}?actor_id={{userId}}",
+            "description": "L’auteur ou un organisateur / administrateur peut modifier le texte.\n\nRôle : actor_id doit être l’auteur du contenu, un admin du groupe lié ou un organisateur de l’événement. Il doit aussi avoir accès au fil.\nRéponse : message ou commentaire actualisé; une suppression renvoie 204.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"body\":\"Message corrigé.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un message",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/messages/{{messageId}}?actor_id={{userId}}",
+            "description": "L’auteur ou un gestionnaire peut supprimer le message et ses commentaires.\n\nRôle : actor_id doit être l’auteur du contenu, un admin du groupe lié ou un organisateur de l’événement. Il doit aussi avoir accès au fil.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Lister les commentaires",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/messages/{{messageId}}/comments?viewer_id={{userId}}&limit=50&offset=0",
+            "description": "Retourne les commentaires du message.\n\nRôle : viewer_id doit être membre du groupe, ou participant/organisateur de l’événement lié. Pour un groupe public, les messages restent réservés aux membres.\nRéponse : tableau paginé de messages ou commentaires."
+          }
+        },
+        {
+          "name": "Commenter un message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/messages/{{messageId}}/comments",
+            "description": "L’auteur doit être membre du groupe ou de l’événement.\n\nRôle : author_id doit être membre du groupe ou de l’événement. Dans un groupe, les membres ne publient que si allow_member_posts est activé; les admins peuvent toujours publier.\nRéponse : message ou commentaire créé avec id, auteur, texte et created_at; statut 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"author_id\":{{userId}},\"body\":\"Merci pour l’information.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Modifier un commentaire",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/message-comments/{{commentId}}?actor_id={{userId}}",
+            "description": "L’auteur ou un gestionnaire peut modifier le commentaire.\n\nRôle : actor_id doit être l’auteur du contenu, un admin du groupe lié ou un organisateur de l’événement. Il doit aussi avoir accès au fil.\nRéponse : message ou commentaire actualisé; une suppression renvoie 204.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"body\":\"Commentaire corrigé.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un commentaire",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/message-comments/{{commentId}}?actor_id={{userId}}",
+            "description": "L’auteur ou un gestionnaire peut supprimer le commentaire.\n\nRôle : actor_id doit être l’auteur du contenu, un admin du groupe lié ou un organisateur de l’événement. Il doit aussi avoir accès au fil.\nRéponse : 204 No Content; aucun corps."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Albums photo",
+      "description": "Albums d’événements, photos par participant et commentaires.",
+      "item": [
+        {
+          "name": "Créer un album",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}/albums",
+            "description": "Un membre de l’événement crée un album.\n\nRôle : creator_id doit être participant ou organisateur de l’événement.\nRéponse : métadonnées de l’album, de la photo ou du commentaire actualisées; création 201 si applicable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Souvenirs\",\"creator_id\":{{userId}}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lister les albums",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/albums?viewer_id={{userId}}",
+            "description": "Retourne les albums de l’événement.\n\nRôle : lecture publique pour un événement public; viewer_id doit être membre de l’événement si celui-ci est privé.\nRéponse : tableau d’albums, photos ou commentaires."
+          }
+        },
+        {
+          "name": "Lire un album",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/albums/{{albumId}}?viewer_id={{userId}}",
+            "description": "Retourne les métadonnées de l’album.\n\nRôle : lecture publique pour un événement public; viewer_id doit être membre de l’événement si celui-ci est privé.\nRéponse : objet album avec id, event_id, name, created_by et created_at."
+          }
+        },
+        {
+          "name": "Renommer un album",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/albums/{{albumId}}?actor_id={{userId}}",
+            "description": "Le créateur ou un organisateur peut renommer l’album.\n\nRôle : actor_id doit être l’auteur/créateur du contenu ou un organisateur de l’événement; il doit rester membre de l’événement.\nRéponse : métadonnées de l’album actualisées.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Photos de la journée\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un album",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/albums/{{albumId}}?actor_id={{userId}}",
+            "description": "Le créateur ou un organisateur peut supprimer l’album et ses photos.\n\nRôle : actor_id doit être l’auteur/créateur du contenu ou un organisateur de l’événement; il doit rester membre de l’événement.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Lister les photos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/albums/{{albumId}}/photos?viewer_id={{userId}}&limit=50&offset=0",
+            "description": "Retourne les photos et leurs URL.\n\nRôle : lecture publique pour un événement public; viewer_id doit être membre de l’événement si celui-ci est privé.\nRéponse : tableau d’albums, photos ou commentaires."
+          }
+        },
+        {
+          "name": "Ajouter une photo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/albums/{{albumId}}/photos",
+            "description": "L’auteur doit être participant de l’événement. L’image est référencée par URL.\n\nRôle : participant de l’événement obligatoire. L’API vérifie l’appartenance, mais l’ID fourni n’est pas authentifié.\nRéponse : photo/commentaire créé avec son identifiant et ses métadonnées; statut 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"participant_id\":{{userId}},\"image_url\":\"https://example.com/photo.jpg\",\"caption\":\"Un beau souvenir\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Modifier une photo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/photos/{{photoId}}?actor_id={{userId}}",
+            "description": "Le participant auteur ou un organisateur peut modifier l’URL ou la légende.\n\nRôle : actor_id doit être l’auteur/créateur du contenu ou un organisateur de l’événement; il doit rester membre de l’événement.\nRéponse : métadonnées de l’album, de la photo ou du commentaire actualisées; création 201 si applicable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"caption\":\"Légende mise à jour\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer une photo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/photos/{{photoId}}?actor_id={{userId}}",
+            "description": "L’auteur ou un organisateur peut supprimer la photo.\n\nRôle : actor_id doit être l’auteur/créateur du contenu ou un organisateur de l’événement; il doit rester membre de l’événement.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Lister les commentaires photo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/photos/{{photoId}}/comments?viewer_id={{userId}}&limit=50&offset=0",
+            "description": "Retourne les commentaires de la photo.\n\nRôle : lecture publique pour un événement public; viewer_id doit être membre de l’événement si celui-ci est privé.\nRéponse : tableau d’albums, photos ou commentaires."
+          }
+        },
+        {
+          "name": "Commenter une photo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/photos/{{photoId}}/comments",
+            "description": "Seuls les participants peuvent commenter.\n\nRôle : participant de l’événement obligatoire. L’API vérifie l’appartenance, mais l’ID fourni n’est pas authentifié.\nRéponse : photo/commentaire créé avec son identifiant et ses métadonnées; statut 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"author_id\":{{userId}},\"body\":\"Très belle photo !\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Modifier un commentaire photo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/photo-comments/{{commentId}}?actor_id={{userId}}",
+            "description": "L’auteur ou un organisateur peut modifier le commentaire.\n\nRôle : actor_id doit être l’auteur/créateur du contenu ou un organisateur de l’événement; il doit rester membre de l’événement.\nRéponse : métadonnées de l’album, de la photo ou du commentaire actualisées; création 201 si applicable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"body\":\"Commentaire modifié.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un commentaire photo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/photo-comments/{{commentId}}?actor_id={{userId}}",
+            "description": "L’auteur ou un organisateur peut supprimer le commentaire.\n\nRôle : actor_id doit être l’auteur/créateur du contenu ou un organisateur de l’événement; il doit rester membre de l’événement.\nRéponse : 204 No Content; aucun corps."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sondages",
+      "description": "Sondages, questions, choix et réponses.",
+      "item": [
+        {
+          "name": "Créer un sondage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}/polls",
+            "description": "Un organisateur crée un sondage avec au moins une question et deux choix par question.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : sondage, question ou option créée/actualisée; les détails du sondage contiennent la hiérarchie questions/options.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"Choix du repas\",\"creator_id\":{{userId}},\"questions\":[{\"prompt\":\"Que préférez-vous ?\",\"options\":[{\"label\":\"Végétarien\"},{\"label\":\"Classique\"}]}]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lister les sondages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/polls?viewer_id={{userId}}",
+            "description": "Retourne sondages, questions et choix.\n\nRôle : lecture publique pour un événement public; viewer_id doit être membre de l’événement si celui-ci est privé.\nRéponse : tableau de sondages avec questions et choix."
+          }
+        },
+        {
+          "name": "Lire un sondage",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/polls/{{pollId}}?viewer_id={{userId}}",
+            "description": "Retourne le détail complet du sondage.\n\nRôle : lecture publique pour un événement public; viewer_id doit être membre de l’événement si celui-ci est privé.\nRéponse : sondage avec questions et options de réponse."
+          }
+        },
+        {
+          "name": "Modifier un sondage",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/polls/{{pollId}}?actor_id={{userId}}",
+            "description": "Un organisateur modifie le titre.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : sondage, question ou option créée/actualisée; les détails du sondage contiennent la hiérarchie questions/options.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"Choix du déjeuner\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un sondage",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/polls/{{pollId}}?actor_id={{userId}}",
+            "description": "Un organisateur supprime le sondage et ses réponses.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Ajouter une question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/polls/{{pollId}}/questions?actor_id={{userId}}",
+            "description": "Ajoute une question avec au moins deux choix.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : sondage, question ou option créée/actualisée; les détails du sondage contiennent la hiérarchie questions/options.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"prompt\":\"Quelle heure ?\",\"options\":[{\"label\":\"12 h\"},{\"label\":\"13 h\"}]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Modifier une question",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/poll-questions/{{questionId}}?actor_id={{userId}}",
+            "description": "Un organisateur modifie le libellé.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : sondage, question ou option créée/actualisée; les détails du sondage contiennent la hiérarchie questions/options.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"prompt\":\"À quelle heure ?\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer une question",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/poll-questions/{{questionId}}?actor_id={{userId}}",
+            "description": "Un sondage conserve au moins une question.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Ajouter un choix",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/poll-questions/{{questionId}}/options?actor_id={{userId}}",
+            "description": "Un organisateur ajoute un choix.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : sondage, question ou option créée/actualisée; les détails du sondage contiennent la hiérarchie questions/options.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"label\":\"14 h\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Modifier un choix",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/poll-options/{{optionId}}?actor_id={{userId}}",
+            "description": "Un organisateur modifie le libellé.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : sondage, question ou option créée/actualisée; les détails du sondage contiennent la hiérarchie questions/options.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"label\":\"15 h\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un choix",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/poll-options/{{optionId}}?actor_id={{userId}}",
+            "description": "Une question conserve au moins deux choix; un choix déjà sélectionné ne peut pas être supprimé.\n\nRôle : actor_id doit être organisateur de l’événement auquel le sondage est rattaché.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Répondre au sondage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/polls/{{pollId}}/responses",
+            "description": "Un participant fournit exactement un choix par question; une nouvelle réponse remplace la précédente.\n\nRôle : participant de l’événement uniquement. Une réponse doit sélectionner un choix pour chaque question.\nRéponse : sélection actuelle du participant; statut 201. Une nouvelle soumission met à jour les réponses.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"participant_id\":{{userId}},\"answers\":[{\"question_id\":{{questionId}},\"option_id\":{{optionId}}]}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lire les réponses d’un participant",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/polls/{{pollId}}/responses/{{userId}}?viewer_id={{userId}}",
+            "description": "Un membre de l’événement peut consulter les réponses.\n\nRôle : viewer_id doit être participant ou organisateur de l’événement; pour consulter les réponses d’un tiers, celui-ci doit aussi être participant.\nRéponse : réponses sélectionnées, question par question, pour ce participant."
+          }
+        },
+        {
+          "name": "Lire les résultats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/polls/{{pollId}}/results?viewer_id={{userId}}",
+            "description": "Retourne le nombre de votes par choix.\n\nRôle : viewer_id doit être participant ou organisateur de l’événement; pour consulter les réponses d’un tiers, celui-ci doit aussi être participant.\nRéponse : sondage et nombre de votes par option."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Billetterie",
+      "description": "Types de billets et enregistrements d’achat, sans paiement en ligne.",
+      "item": [
+        {
+          "name": "Créer un type de billet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}/ticket-types",
+            "description": "Un organisateur crée un type de billet pour un événement public; prix en centimes.\n\nRôle : actor_id/organizer_id doit désigner un organisateur de l’événement public. Les listes et détails de billets contiennent des données personnelles d’acheteurs.\nRéponse : type de billet avec stock vendu/restant; création renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Entrée standard\",\"price_cents\":2500,\"quantity\":100,\"organizer_id\":{{userId}}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lister les types de billet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/ticket-types?viewer_id={{userId}}",
+            "description": "Retourne prix, quantité, billets vendus et places restantes.\n\nRôle : lecture publique pour une billetterie d’événement public; ces réponses ne contiennent pas les coordonnées des acheteurs.\nRéponse : tableau de types avec prix en centimes, quantité, sold et available."
+          }
+        },
+        {
+          "name": "Lire un type de billet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/ticket-types/{{ticketTypeId}}?viewer_id={{userId}}",
+            "description": "Retourne le type de billet et son stock.\n\nRôle : lecture publique pour une billetterie d’événement public; ces réponses ne contiennent pas les coordonnées des acheteurs.\nRéponse : type avec prix, quantité, billets vendus et places restantes."
+          }
+        },
+        {
+          "name": "Modifier un type de billet",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/ticket-types/{{ticketTypeId}}?actor_id={{userId}}",
+            "description": "La quantité ne peut pas être réduite sous le nombre de billets vendus.\n\nRôle : actor_id/organizer_id doit désigner un organisateur de l’événement public. Les listes et détails de billets contiennent des données personnelles d’acheteurs.\nRéponse : type de billet avec stock vendu/restant; création renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"price_cents\":3000,\"quantity\":120}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un type de billet",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/ticket-types/{{ticketTypeId}}?actor_id={{userId}}",
+            "description": "Un type déjà vendu ne peut pas être supprimé.\n\nRôle : actor_id/organizer_id doit désigner un organisateur de l’événement public. Les listes et détails de billets contiennent des données personnelles d’acheteurs.\nRéponse : 204 No Content; aucun corps."
+          }
+        },
+        {
+          "name": "Acheter / enregistrer un billet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}/ticket-types/{{ticketTypeId}}/tickets",
+            "description": "L’adresse e-mail ne peut obtenir qu’un billet pour cet événement; retourne l’achat enregistré.\n\nRôle : achat ouvert à une personne extérieure, sans compte. Une adresse e-mail obtient au plus un billet par événement public, dans la limite du stock.\nRéponse : billet avec type, coordonnées acheteur et date d’achat; achat renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"first_name\":\"Sam\",\"last_name\":\"Martin\",\"email\":\"sam@example.com\",\"address\":\"10 rue Exemple, Paris\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lister les billets vendus",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/tickets?organizer_id={{userId}}",
+            "description": "Réservé aux organisateurs; retourne les données d’achat.\n\nRôle : actor_id/organizer_id doit désigner un organisateur de l’événement public. Les listes et détails de billets contiennent des données personnelles d’acheteurs.\nRéponse : tableau des billets avec coordonnées d’achat et date."
+          }
+        },
+        {
+          "name": "Lire un billet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/tickets/{{ticketId}}?organizer_id={{userId}}",
+            "description": "Réservé aux organisateurs.\n\nRôle : actor_id/organizer_id doit désigner un organisateur de l’événement public. Les listes et détails de billets contiennent des données personnelles d’acheteurs.\nRéponse : billet avec type, coordonnées acheteur et date d’achat; achat renvoie 201."
+          }
+        },
+        {
+          "name": "Supprimer un billet",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/tickets/{{ticketId}}?organizer_id={{userId}}",
+            "description": "Un organisateur annule l’enregistrement et libère une place.\n\nRôle : actor_id/organizer_id doit désigner un organisateur de l’événement public. Les listes et détails de billets contiennent des données personnelles d’acheteurs.\nRéponse : 204 No Content; aucun corps."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Liste d’achats",
+      "description": "Liste facultative activée dans les paramètres de l’événement.",
+      "item": [
+        {
+          "name": "Créer un article",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}/shopping-items",
+            "description": "Un membre ajoute un nom unique par événement, une quantité et une heure d’arrivée.\n\nRôle : user_id doit être participant ou organisateur; la liste doit être activée. Un nom d’article est unique par événement.\nRéponse : article avec événement, responsable, nom, quantité et heure d’arrivée; création renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"user_id\":{{userId}},\"name\":\"Boissons\",\"quantity\":2,\"arrival_at\":\"2026-12-20T09:30:00+00:00\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lister les articles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/shopping-items?viewer_id={{userId}}",
+            "description": "Retourne les articles et leurs responsables.\n\nRôle : viewer_id doit être participant ou organisateur; la liste doit être activée sur l’événement.\nRéponse : tableau d’articles avec responsable, quantité et heure d’arrivée."
+          }
+        },
+        {
+          "name": "Modifier un article",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/shopping-items/{{shoppingItemId}}",
+            "description": "Le responsable ou un organisateur peut modifier l’article.\n\nRôle : user_id doit être le responsable de l’article ou un organisateur; la liste doit être activée.\nRéponse : article avec événement, responsable, nom, quantité et heure d’arrivée; création renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"user_id\":{{userId}},\"quantity\":3}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un article",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/shopping-items/{{shoppingItemId}}?actor_id={{userId}}",
+            "description": "Le responsable ou un organisateur peut supprimer l’article.\n\nRôle : actor_id doit être le responsable de l’article ou un organisateur; la liste doit être activée.\nRéponse : 204 No Content; aucun corps."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Covoiturage bonus",
+      "description": "Offres de trajet, sans réservation de siège.",
+      "item": [
+        {
+          "name": "Créer une offre de trajet",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/events/{{eventId}}/rides",
+            "description": "Le covoiturage doit être activé; le conducteur doit être membre de l’événement.\n\nRôle : driver_id doit être participant ou organisateur; le covoiturage doit être activé et le départ précéder l’événement.\nRéponse : offre avec conducteur, lieu/heure de départ, prix, sièges et temps maximal d’écart; création renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"driver_id\":{{userId}},\"departure_location\":\"Gare de Lyon\",\"departure_at\":\"2026-12-20T08:00:00+00:00\",\"price_cents\":500,\"seats_available\":3,\"max_time_gap_minutes\":30}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Lister les trajets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/events/{{eventId}}/rides?viewer_id={{userId}}",
+            "description": "Retourne les offres de covoiturage de l’événement.\n\nRôle : viewer_id doit être participant ou organisateur; le covoiturage doit être activé. Cette API publie des offres sans réserver de siège.\nRéponse : tableau d’offres avec conducteur, départ, prix, places et marge de temps."
+          }
+        },
+        {
+          "name": "Lire un trajet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/rides/{{rideId}}?viewer_id={{userId}}",
+            "description": "Retourne une offre de trajet.\n\nRôle : viewer_id doit être participant ou organisateur; le covoiturage doit être activé. Cette API publie des offres sans réserver de siège.\nRéponse : offre avec conducteur, lieu/heure de départ, prix, sièges et temps maximal d’écart; création renvoie 201."
+          }
+        },
+        {
+          "name": "Modifier un trajet",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/rides/{{rideId}}",
+            "description": "Le conducteur ou un organisateur peut modifier l’offre.\n\nRôle : driver_id désigne le conducteur ou un organisateur; le covoiturage doit être activé.\nRéponse : offre avec conducteur, lieu/heure de départ, prix, sièges et temps maximal d’écart; création renvoie 201.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"driver_id\":{{userId}},\"seats_available\":2}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Supprimer un trajet",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/rides/{{rideId}}?actor_id={{userId}}",
+            "description": "Le conducteur ou un organisateur peut supprimer l’offre.\n\nRôle : actor_id doit être conducteur ou organisateur; le covoiturage doit être activé.\nRéponse : 204 No Content; aucun corps."
+          }
+        }
+      ]
+    }
+  ]
+}
